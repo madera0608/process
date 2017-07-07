@@ -1,0 +1,1 @@
+OcultarCampo('wl_badquirir',2);

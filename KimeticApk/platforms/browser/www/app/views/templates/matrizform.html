@@ -1,0 +1,98 @@
+<div class="row" style="width: -moz-max-content; padding-bottom: 4px; padding-top: 4px;" >
+<table st-table="display" st-pipe="paginationTable" class="table" style="margin-bottom: 0px;" >
+		 <colgroup>
+		  	<col ng-if="srcData.escritura" style="width: 25px;">
+		  	<col ng-repeat="col in srcData.fields" ng-show="col.lectura" style="width:{{(col.tipo == 'F')?140:((col.right - col.left)>12)?((1280*0.85*0.7)):((col.right - col.left)/12)*((1280*0.85*0.7))}}px">		  
+		 </colgroup>
+        <tr>
+			<th style="border-top: 0px solid rgb(221, 221, 221);" colspan="{{((srcData.fields.length) + 1)}}"><span ng-bind-html="getHtml(descriptionMatriz)"></span>  <div st-items-by-page="itemsM" st-pagination="" st-template="paginationcustomMatriz.html" style="display: inline-block; vertical-align: middle;"></div></th>        
+        </tr>       
+        <tr>
+	        <th class="head" style="text-align: center;" ng-if="srcData.escritura" id="M0{{nameMatriz}}0" name="M0{{nameMatriz}}0">X</th>
+			<th class="head" ng-repeat="col in srcData.fields" ng-show="col.lectura"><span ng-show="col.obligatorio" style="color:red">*</span>{{col.descripcion}}</th>        
+        </tr>
+
+        <tbody>
+	        <tr ng-repeat="fil in display" on-finish-render broadcasteventname="ngRepeatBroadcast1">
+	        	<td ng-if="srcData.escritura" align="center"><input type="checkbox" id="CHKBOXMAT{{nameMatriz}}{{fil.numero}}" name="CHKBOXMAT{{nameMatriz}}{{fil.numero}}" ng-model="fil.selChk" /></td>
+		        <td ng-repeat="colFil in fil.fileItems" ng-show="srcData.fields[$index].lectura" >
+		        
+                   	<a ng-if="(srcData.fields[$index].evento && srcData.fields[$index].desEvento!='')" href="javascript:;" ng-click="ejecEventAgent({campo : srcData.fields[$index].nombre , fila : (tableState.pagination.start + ($parent.$parent.$index + 1))});" id="evento_{{srcData.fields[$index].nombre}}" name="evento_{{srcData.fields[$index].nombre}}" >{{srcData.fields[$index].desEvento}}</a>
+                   	<a ng-if="(srcData.fields[$index].evento && srcData.fields[$index].desEvento=='')" href="javascript:;" ng-click="ejecEventAgent({campo : srcData.fields[$index].nombre , fila : (tableState.pagination.start + ($parent.$parent.$index + 1))});" id="evento_{{srcData.fields[$index].nombre}}" name="evento_{{srcData.fields[$index].nombre}}" >{{ 'DescriptionEventForm' | translate }}</a>
+                   			        
+                    <input ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'T' || srcData.fields[$index].tipo == 'P') && srcData.fields[$index].escritura)" type="text" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" maxlength="{{srcData.fields[$index].longitudMaxima}}"  class="form-control formularioControl" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"/>
+                    <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'T' || srcData.fields[$index].tipo == 'P') && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-bind-html="getHtml(colFil.value)"></p>
+                    <input ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'T' || srcData.fields[$index].tipo == 'P') && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden"  id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+                    <input ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'N' || srcData.fields[$index].tipo == 'O') && srcData.fields[$index].escritura)" type="text" ui-number-mask="{{field.decimal}}" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" min="{{srcData.fields[$index].minimo}}" max="{{srcData.fields[$index].maximo}}" maxlength="{{srcData.fields[$index].longitudMaxima}}" class="form-control formularioControl" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"/>
+                    <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'N' || srcData.fields[$index].tipo == 'O') && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}">{{colFil.value}}</p>
+                    <input ng-if="(!srcData.fields[$index].listaAjax && (srcData.fields[$index].tipo == 'N' || srcData.fields[$index].tipo == 'O') && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+					<div class="input-group" ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'F' && srcData.fields[$index].escritura)">					    
+					    <label class="input-group-btn">
+							<input type="text" class="form-control formularioControl date-input" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" maxlength="10" ng-required="srcData.fields[$index].obligatorio"/>					    
+					        <span class="btn btn-default" style="z-index: 3; margin-left: -40px;height: 21px;">
+					            <span class="glyphicon glyphicon-calendar" style="top: -6px;"></span>
+					        </span>
+					    </label>
+					</div>	
+  	                <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'F' && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}">{{colFil.value}}</p>
+  	                <input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'F' && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+                    <input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'C' && srcData.fields[$index].escritura)" type="text" ui-number-mask="{{field.decimal}}" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" min="{{srcData.fields[$index].minimo}}" max="{{srcData.fields[$index].maximo}}" maxlength="{{srcData.fields[$index].longitudMaxima}}" class="form-control formularioControl" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"/>
+                    <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'C' && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}">{{colFil.value}}</p>
+                    <input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'C' && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+                	<input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'H' && srcData.fields[$index].escritura)" type="time" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" class="form-control formularioControl" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"/>
+                    <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'H' && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}">{{colFil.value}}</p>
+                    <input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'H' && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+                 	<textarea ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'Q' && srcData.fields[$index].escritura)" maxlength="{{srcData.fields[$index].longitudMaxima}}" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" class="form-control formularioControl" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"></textarea>
+                    <p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'Q' && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-bind-html="getHtml(colFil.value)"></p>
+                    <input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'Q' && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process/>
+                    
+					<select ng-init="initListMultiple(srcData.fields[$index].options,colFil)" ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'A' && srcData.fields[$index].escritura && srcData.fields[$index].multiple)" size="4" multiple="multiple" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" class="form-control formularioControl lista" style="width: 100%;" ng-model="colFil.valueM" ng-change="setChangeValue(colFil)" ng-options="item.key as item.value for item in srcData.fields[$index].options" ng-required="srcData.fields[$index].obligatorio">
+					</select>
+					<select ng-init="initList(srcData.fields[$index].options,colFil)" ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'A' && srcData.fields[$index].escritura && !srcData.fields[$index].multiple)" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" class="form-control formularioControl lista" style="width: 100%;" ng-model="colFil.value" ng-change="setChangeValue(colFil)" ng-options="item.key as item.value for item in srcData.fields[$index].options" ng-required="srcData.fields[$index].obligatorio">
+					 	<option value="">Seleccione</option>
+					</select>
+					<p class="well formularioControlReadM"  ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'A' && !srcData.fields[$index].escritura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}">{{colFil.value}}</p>	
+					<input ng-if="(!srcData.fields[$index].listaAjax && srcData.fields[$index].tipo == 'A' && (!srcData.fields[$index].lectura || !srcData.fields[$index].escritura))" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" value="{{colFil.value}}"/>																			
+					          
+                	<input ng-if="(srcData.fields[$index].tipo == 'V' && srcData.fields[$index].escritura)" type="checkbox" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}"  style="height: 16px; box-shadow: inset 0 0px 0px rgba(0,0,0,.075);" class="form-control" ng-model="colFil.checked" ng-change="setChangeValue(colFil)" ng-required="srcData.fields[$index].obligatorio"/>
+                	<input ng-if="(srcData.fields[$index].tipo == 'V' && !srcData.fields[$index].escritura)" type="checkbox" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" style="height: 16px; box-shadow: inset 0 0px 0px rgba(0,0,0,.075);" class="form-control" ng-model="colFil.checked" disabled="disabled"/>
+                	<input ng-if="(srcData.fields[$index].tipo == 'V' && !srcData.fields[$index].lectura)" type="checkbox" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}"  style="height: 16px; box-shadow: inset 0 0px 0px rgba(0,0,0,.075);" class="form-control" ng-model="colFil.checked" ng-change="setChangeValue(colFil)" ng-show="false"/>
+                	
+                    <input ng-if="srcData.fields[$index].listaAjax" type="hidden" id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-model="colFil.value" ng-change="setChangeValue(colFil)" update-field-process />
+                    <p class="well formularioControlReadM" ng-if="(srcData.fields[$index].listaAjax && !srcData.fields[$index].escritura && srcData.fields[$index].lectura)" id="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" name="SPAN_M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}{{nameMatriz}}{{$index+1}}" ng-bind-html="getHtml(colFil.value)"></p>
+                    <angucomplete-alt ng-if="(srcData.fields[$index].listaAjax && srcData.fields[$index].escritura && srcData.fields[$index].lectura)" 
+                   	  id="M{{tableState.pagination.start + ($parent.$parent.$index + 1)}}_{{nameMatriz}}{{$index+1}}_Ajax"
+		              pause="300"
+		              selected-object="selectedAjaxM"
+					  remote-api-handler="searchEventAjaxM"
+		              title-field="titulo"
+		              minlength="40"
+		              input-changed="eventAjaxChangedM"
+		              initial-value="colFil.value"
+		              input-class="form-control formularioControl"
+		              match-class="highlight" />                	
+		        </td>
+	        </tr>
+        </tbody>
+		<tfoot>
+	        <tr>
+	            <td colspan="{{((srcData.fields.length) + 1)}}" style="width: 203px;">
+		 			<button ng-if="srcData.escritura" type="button" id="MATSE{{nameMatriz}}" name="MATSE{{nameMatriz}}" ng-click="markAlleRows()" class="btn btn-xs btn-primary">
+		                <i class="glyphicon glyphicon-remove-circle"></i>
+		            </button>
+					<button ng-if="srcData.escritura" type="button" id="MATNV{{nameMatriz}}" name="MATNV{{nameMatriz}}" ng-click="addRow($event)" class="btn btn-xs btn-primary">
+				        <i class="glyphicon glyphicon-plus"></i> {{ 'AddRowForm' | translate }}
+				    </button>	            
+					<button ng-if="srcData.escritura" type="button" id="MATBO{{nameMatriz}}" name="MATBO{{nameMatriz}}" ng-click="removeRows()" class="btn btn-xs btn-primary">
+	               	 	<i class="glyphicon glyphicon-minus"></i> {{ 'RemoveRowForm' | translate }}
+	            	</button>   
+				</td>
+	        </tr> 
+	</tfoot>        
+    </table>
+</div>

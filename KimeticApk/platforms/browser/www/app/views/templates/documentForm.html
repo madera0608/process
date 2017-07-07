@@ -1,0 +1,306 @@
+<form name="documentForm" novalidate style="height: 100%;">	
+<div class="row-fluid" style="display: flex; flex-direction: column;">	
+			<header>
+			    <div class="row">
+	                 <div  class="{{(lectura=='N')?'col-lg-6 col-sm-12':'col-lg-8 col-sm-12'}}">
+	                     <ol class="breadcrumb">
+	                         <li>
+	                             {{ 'Document' | translate }}
+	                         </li>
+	                         <li class="active"> #{{docData.nuDoc}} - {{docData.nbConversacion}}</li>                         
+	                     </ol>
+	                 </div>
+					<!-- Top Actions Forms -->
+					<div class="{{(lectura=='N')?'col-lg-6 col-sm-12 navbar-inverse':'col-lg-4 col-sm-12 navbar-inverse'}}" class="">
+						 <ul class="nav navbar-right top-nav-form" style="margin-right: 0px;">			
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3' && docData.estado=='I'">
+						         <a href="javascript:;" ng-click="actionsDocument('A');" id="wl_bsolicitar" name="wl_bsolicitar">{{ 'AccEnviar' | translate }}</a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3' && docData.status!='0' && docData.estado=='N'">
+						         <a href="javascript:;" ng-click="actionsDocument('A');" id="wl_baprobar" name="wl_baprobar">{{ 'AccAprobar' | translate }}</a>
+						     </li>	
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3' && docData.status!='0' && docData.estado=='C'">
+						         <a href="javascript:;" ng-click="actionsDocument('A');" id="wl_bentregar" name="wl_bentregar">{{ 'AccEntregar' | translate }}</a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3' && docData.status!='0' && docData.estado=='T'">
+						         <a href="javascript:;" ng-click="actionsDocument('A');" id="wl_baceptar" name="wl_baceptar">{{ 'AccAceptar' | translate }}</a>
+						     </li>					     					     				     
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3' && docData.status!='0' && (docData.estado=='N' || docData.estado=='C' || docData.estado=='T')">
+						         <a href="javascript:;" ng-click="actionsDocument('R');" id="wl_bobjetar" name="wl_bobjetar">{{ 'AccObjetar' | translate }}</a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='N' && docData.lectura && docData.adquirible && !docData.espera && docData.status!='2' && docData.status!='3' && fromState!='root.main.files'">
+						         <a href="javascript:;" ng-click="actionsDocument('V');" id="wl_badquirir" name="wl_badquirir">{{ 'AccAdquirir' | translate }}</a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='N' && docData.lectura && docData.recuperable && !docData.espera && docData.status!='2' && docData.status!='3'">
+						         <a href="javascript:;" ng-click="actionsDocument('O');" id="wl_brecuperar" name="wl_brecuperar">{{ 'AccRecuperar' | translate }}</a>
+						     </li>						     					     
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.espera && docData.status!='2' && docData.status!='3' && anular">
+						         <a href="javascript:;" ng-click="actionsDocument('C');" id="wl_banular" name="wl_banular">{{ 'AccAnular' | translate }}</a>
+						      </li>
+						     <li class="dropdown" ng-if="lectura=='N' && docData.lectura && docData.notificacion && !docData.espera && docData.status!='2' && docData.status!='3'">
+						         <a href="#" id="wl_bborrar" name="wl_bborrar" ng-click="$event.preventDefault()">{{ 'AccBorrar' | translate }}</a>
+						     </li>					      
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && !docData.espera && docData.status!='2' && docData.status!='3'">
+						         <a href="javascript:;" ng-click="saveDocument();" id="wl_bguardar" name="wl_bguardar">{{ 'AccGuardar' | translate }}</a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='S'">
+						         <a href="javascript:;" ng-click="goOpenDocument(nuDoc,nuInst,wfa);" id="wl_babrir" name="wl_babrir">{{ 'AccAbrir' | translate }}</a>
+						     </li>						     
+						     <li class="dropdown">
+						         <a ng-if="lectura=='N'" href="javascript:;" ng-click="openInstModal();"><span class="label label-danger"><i class="fa fa-remove"></i></span></a>		
+						         <a ng-if="lectura=='S'" href="javascript:;" ng-click="hideDoc({taskId : 'x'});"><span class="label label-danger"><i class="fa fa-remove"></i></span></a>		
+						     </li>					     	
+						 </ul>					 
+					</div>				                 
+	            </div>	
+				<div ng-if="ticketService.isShowError()">
+					<div ng-repeat="msg in ticketService.getMessageError()" class="alert alert-danger" style="margin-bottom: 0px;">
+				         {{ msg | translate }}
+					</div>	
+				</div>
+				<div ng-if="agentMsg.length>0">
+					<div ng-repeat="msg in agentMsg" ng-if="agentTipoMsg" class="alert alert-danger" style="margin-bottom: 0px;">
+				         {{ msg }}
+					</div>
+					<div ng-repeat="msg in agentMsg" ng-if="!agentTipoMsg" class="alert alert-info" style="margin-bottom: 0px;">
+				         {{ msg }}
+					</div>						
+				</div>	
+			    <div class="row formularioinfobar" style="margin-bottom: 0px;">
+					<div class="row navbar-inverse">
+						 <ul class="nav navbar-left top-nav-form" style="margin-right: 0px;">
+						     <li class="dropdown">
+						         <a href="#" ng-click="$event.preventDefault()" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-newspaper-o"></i> {{frmnName}}<b class="caret" ng-if="lectura=='N'"></b></a>
+						         <ul class="dropdown-menu" ng-if="lectura=='N'">
+						             <li ng-repeat="form in docData.formsContext">
+						                 <a href="javascript:;" ng-click="loadFormDocument(form.frmn)">{{form.nombre}}</a>
+						             </li>
+						         </ul>
+						     </li>	
+						     <li class="dropdown" ng-if="docData.agents.length>0 && lectura=='N'">
+						         <a href="#" ng-click="$event.preventDefault()" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i> <b class="caret"></b></a>
+						         <ul class="dropdown-menu">
+						             <li ng-repeat="agent in docData.agents">
+						                 <a href="javascript:;" ng-if="agent.href!=null" ng-click="openLink(agent.href)" id="AGENTE_{{agent.cdAg}}" name="AGENTE_{{agent.cdAg}}">{{agent.descripcion}}</a>
+						                 <a href="javascript:;" ng-if="agent.href==null" ng-click="ejecAgent(agent.cdAg,agent.contexto)" id="AGENTE_{{agent.cdAg}}" name="AGENTE_{{agent.cdAg}}">{{agent.descripcion}}</a>
+						             </li>
+						         </ul>
+						     </li>	
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.lectura && (anexar || desAnexar)">
+						         <a href="#" ng-click="$event.preventDefault()" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-paperclip"></i> <b class="caret"></b></a>
+						         <ul class="dropdown-menu">
+						             <li ng-repeat="anx in listAnexos">
+						                 <a href="javascript:;" ng-if="anx.borrado == 'N'" ng-click="openLink(anx.href)">{{anx.descripcion}}</a>
+						             </li>
+		                             <li class="divider" ng-if="!docData.lectura && anexar && listAnexos.length>0"></li>
+						             <li>
+						                 <a href="javascript:;" ng-click="openAnexoModal();" id="anexar_link" name="anexar_link" >{{ 'AccAnexar' | translate }}</a>
+						             </li>					             
+						         </ul>
+						     </li>	
+						     <li class="dropdown" ng-if="lectura=='N' && docData.esperaOrigen.length>0">
+						         <a href="#" ng-click="$event.preventDefault()" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-group"></i> {{ 'WaitActivityForm' | translate }} <b class="caret"></b></a>
+						         <ul class="dropdown-menu">
+						             <li ng-repeat="origen in docData.esperaOrigen">
+										 <a href="javascript:;">{{origen}}</a>						             
+						             </li>				             
+						         </ul>
+						     </li>						     				     				     				 			
+						     <li class="dropdown" ng-if="lectura=='N' && !docData.espera && docData.status!='2' && docData.status!='3' && imprimir">
+						         <a href="#" id="imprimir_link" name="imprimir_link" ng-click="$event.preventDefault()"><i class="fa fa-print"></i></a>
+						     </li>
+						     <li class="dropdown" ng-if="lectura=='N' && (docData.status=='2' || docData.status=='3') && imprimir">
+						         <a href="#" id="imprimir_link" name="imprimir_link" ng-click="$event.preventDefault()"><i class="fa fa-print"></i></a>
+						     </li>					     
+						 </ul>			
+					</div> 
+	            </div>				            		
+			</header>
+			
+<main style="flex: 1 1 0%; overflow: auto;">
+	<div class="row">
+                 <div class="row formularioContent">
+                 	<div class="row">
+				     <div ng-repeat="group in docData.forms[0].groups" ng-show="group.visible" class="row" id="GRUPO_{{group.group}}" name="GRUPO_{{group.group}}" on-finish-render broadcasteventname="ngRepeatBroadcast1">
+				         <div class="col-lg-12">
+				             <h3 class="formulariogrouplabel">
+				                 {{group.nombre}}
+				             </h3>
+				         </div>				            
+				         <div class="row">
+							<div ng-repeat="field in group.fields" class="{{(field.tipo=='M' || field.tipo=='Q')?'col-lg-12':'col-lg-6 col-md-6'}}" style="padding: 0px 3px 0px 3px;" ng-show="(field.lectura || field.tipo == 'S')">
+								<div class="formulario-group">
+				                        <div><label class="formulariolabel" ng-if="((field.lectura || (field.tipo == 'S' && field.visible)) && field.tipo!='M')"><span ng-if="(field.obligatorio)" style="color:red">*</span><span ng-bind-html="getHtml(field.descripcion)"></span>
+				                        	<a ng-if="(field.evento && field.desEvento!='' && lectura=='N')" href="javascript:;" ng-click="ejecEventAgent(field.nombre,0);" id="evento_{{field.nombre}}" name="evento_{{field.nombre}}" >{{field.desEvento}}</a>
+				                        	<a ng-if="(field.evento && field.desEvento=='' && lectura=='N')" href="javascript:;" ng-click="ejecEventAgent(field.nombre,0);" id="evento_{{field.nombre}}" name="evento_{{field.nombre}}" >{{ 'DescriptionEventForm' | translate }}</a>				                        	
+				                        </label></div>
+										
+				                        <input ng-if="(!field.listaAjax && field.tipo == 'T' && field.escritura && field.lectura)" type="text" maxlength="{{field.longitudMaxima}}" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"/>
+				                        <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'T' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}" ng-bind-html="getHtml(field.value)"></p>
+				                        <input ng-if="(!field.listaAjax && field.tipo == 'T' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'O' && field.escritura && field.lectura)" type="number" min="-9999999999" max="9999999999" maxlength="{{field.longitudMaxima}}" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"/>
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'O' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}">{{field.value}}</p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'O' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+				   	                    
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'N' && field.escritura && field.lectura)" type="text" ui-number-mask="{{field.decimal}}" ui-negative-number min="{{field.minimo}}" max="{{field.maximo}}" maxlength="{{field.longitudMaxima}}" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"/>
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'N' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}">{{field.value}}</p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'N' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" v/>
+
+										<div class="input-group" ng-if="(!field.listaAjax && field.tipo == 'F' && field.escritura && field.lectura)">
+										    <input type="text" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl date-input" ng-model="field.value" ng-change="setChangeValue(field)" maxlength="10" ng-required="field.obligatorio"/>
+										    <label class="input-group-btn" for="{{field.nombre}}">
+										        <span class="btn btn-default" style="height: 21px;">
+										            <span class="glyphicon glyphicon-calendar" style="top: -6px;"></span>
+										        </span>
+										    </label>
+										</div>	
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'F' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}">{{field.value}}</p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'F' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'C' && field.escritura && field.lectura)" type="text" ui-number-mask="{{field.decimal}}" ui-negative-number min="{{field.minimo}}" max="{{field.maximo}}" maxlength="{{field.longitudMaxima}}" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"/>
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'C' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}">{{field.value}}</p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'C' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+				   	                    				                        
+					                    <input ng-if="(!field.listaAjax && field.tipo == 'H' && field.escritura && field.lectura)" type="time" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"/>
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'H' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}">{{field.value}}</p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'H' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+
+					                    <textarea ng-if="(!field.listaAjax && field.tipo == 'Q' && field.escritura && field.lectura)"  id="{{field.nombre}}" name="{{field.nombre}}" maxlength="{{field.longitudMaxima}}" class="form-control formularioControl" placeholder="{{field.descripcion}}" ng-model="field.value" ng-change="setChangeValue(field)" ng-required="field.obligatorio"></textarea>
+				   	                    <p class="well formularioControlRead"   ng-if="(!field.listaAjax && field.tipo == 'Q' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}" ng-bind-html="getHtml(field.value)"></p>
+				   	                    <input ng-if="(!field.listaAjax && field.tipo == 'Q' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process/>
+				   	                    
+										<select ng-if="(!field.listaAjax && field.tipo == 'L' && field.escritura && field.lectura && field.multiple)" size="4" multiple="multiple" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl lista" style="width: 100%;" ng-model="field.valueM" ng-change="setChangeValue(field)" ng-options="item.key as item.value for item in field.options" ng-required="field.obligatorio">
+										</select>
+										<select ng-if="(!field.listaAjax && field.tipo == 'L' && field.escritura && field.lectura && !field.multiple)" id="{{field.nombre}}" name="{{field.nombre}}" class="form-control formularioControl lista" style="width: 100%;" ng-model="field.value" ng-change="setChangeValue(field)"  ng-options="item.key as item.value for item in field.options" ng-required="field.obligatorio">
+											<option value="">Seleccione</option>
+										</select>
+										<span ng-if="(!field.listaAjax && field.tipo == 'L' && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}" >
+											<div ng-repeat="option in field.options" ng-if="option.selected"><span>{{option.value}}<br/></span></div> 
+										</span>	
+										<input ng-if="(!field.listaAjax && field.tipo == 'L' && (!field.lectura || !field.escritura))" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" value="{{concatFieldList((field.options | filter:{selected:true}))}}" update-field-process/>																			
+										
+		                                <div ng-repeat="fieldChild in field.alternativas" ng-if="(!field.listaAjax && field.tipo == 'S' && field.visible)" class="{{!fieldChild.exclusivo?'checkbox-inline formularioControlCheck':'radio-inline formularioControlRadio'}}">
+		                                    <label class="formulariolabel">
+		                                        <input ng-if="(!fieldChild.exclusivo && fieldChild.escritura)" id="{{fieldChild.nombre}}" name="{{fieldChild.nombre}}" ng-model="fieldChild.checked" ng-change="setChangeValue(fieldChild)" type="checkbox" ng-required="fieldChild.obligatorio"><span ng-if="(!fieldChild.exclusivo && fieldChild.escritura)">{{fieldChild.descripcion}}</span> <span ng-show="(!fieldChild.exclusivo && fieldChild.obligatorio)" style="color:red">*</span>
+		                                        <input ng-if="(!fieldChild.exclusivo && !fieldChild.escritura)" disabled="disabled" id="{{fieldChild.nombre}}" name="{{fieldChild.nombre}}" ng-model="fieldChild.checked" ng-change="setChangeValue(fieldChild)" type="checkbox"><span ng-if="(!fieldChild.exclusivo && !fieldChild.escritura)">{{fieldChild.descripcion}}</span> <span ng-show="(!fieldChild.exclusivo && fieldChild.obligatorio)" style="color:red">*</span>
+		                                        <input ng-if="(!fieldChild.exclusivo && !fieldChild.lectura)" ng-show="false" id="{{fieldChild.nombre}}" name="{{fieldChild.nombre}}" ng-model="fieldChild.checked" ng-change="setChangeValue(fieldChild)" type="checkbox"><span ng-if="(!fieldChild.exclusivo && !fieldChild.lectura)">{{fieldChild.descripcion}}</span> <span ng-show="(!fieldChild.exclusivo && fieldChild.obligatorio)" style="color:red">*</span>		                                        
+		                                        
+		                                        <input ng-if="(fieldChild.exclusivo && fieldChild.escritura)" ng-value="fieldChild.nombre" ng-model="field.value" ng-change="setChangeValue(field)" type="radio" name="{{field.nombre}}"><span ng-if="(fieldChild.exclusivo && fieldChild.escritura)">{{fieldChild.descripcion}}</span>
+		                                        <input ng-if="(fieldChild.exclusivo && !fieldChild.escritura)" ng-value="fieldChild.nombre" disabled="disabled" ng-model="field.value" ng-change="setChangeValue(field)" type="radio"  name="{{field.nombre}}"><span ng-if="(fieldChild.exclusivo && !fieldChild.escritura)">{{fieldChild.descripcion}}</span>
+		                                        <input ng-if="(fieldChild.exclusivo && !fieldChild.lectura)"  ng-value="fieldChild.nombre" ng-show="false" ng-model="field.value" ng-change="setChangeValue(field)" type="radio" name="{{field.nombre}}"><span ng-if="(fieldChild.exclusivo && !fieldChild.lectura)">{{fieldChild.descripcion}}</span>
+		                                    </label>
+		                                </div>	
+		                                
+										<st-matriz-form src-data="field.matriz" name-matriz="field.nombre" description-matriz="field.descripcion" ejec-event-agent="ejecEventAgent(campo,fila)" event-ajax-changed="eventAjaxChanged(id,identField,fila)" selected-ajax="selectedAjax(selected)" search-event-ajax="searchEventAjax(userInputString, timeoutPromise, identField, fila)" ng-if="(!field.listaAjax && field.tipo == 'M' && field.lectura)" /></st-matriz-form>
+												                                
+		                                <input ng-if="field.listaAjax" type="hidden" id="{{field.nombre}}" name="{{field.nombre}}" ng-model="field.value" ng-change="setChangeValue(field)" update-field-process />
+		                                <p class="well formularioControlRead" ng-if="(field.listaAjax && !field.escritura && field.lectura)" id="SPAN_{{field.nombre}}" name="SPAN_{{field.nombre}}" ng-bind-html="getHtml(field.value)"></p>
+		                                <angucomplete-alt ng-if="(field.listaAjax && field.escritura && field.lectura)" 
+		                                	  id="{{field.nombre}}_Ajax"
+		                                	  fila="0"		                                	  
+								              pause="300"
+								              selected-object="selectedAjax"
+											  remote-api-handler="searchEventAjax"
+								              title-field="titulo"
+								              minlength="40"
+								              input-changed="eventAjaxChanged"
+								              initial-value="field.value"								              
+								              input-class="form-control formularioControl"
+								              match-class="highlight" />										
+		                        </div>			                        							
+							</div>							
+				         </div>
+				     </div>
+				   </div>                  
+                 </div>  
+       			<script type="text/javascript">
+	       			function setDates()
+	       			{
+				    	$(".date-input").each(function() {		
+				    		$(this).datepicker({format: formatDate}).on("changeDate", function (e) {
+				    			$(this).change();
+				    			$(this).datepicker('hide');
+				    		});
+				    		$(".input-group-btn").on("click", function (e) {																	    		
+				    			e.stopPropagation();
+				    		});																    		
+				    		$(this).blur(function(){
+				    		    val = $(this).val();
+				    		    val1 = Date.parse(val);
+				    		    if (isNaN(val1)==true && val!==''){
+				    		    	$(this).val("");
+				    		    	$(this).change();
+				    		    }
+				    		});							    		
+				    	});		       			
+		       		}
+
+				</script>                           	
+	</div>
+</main>
+
+<footer ng-if="lectura=='N'">
+	<div id="bottomBar" class="row navbar-inverse">
+                 <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+				     <div class="row">
+				         <div class="row formularioinfolabel">
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+								{{ 'SendBy' | translate }}:
+							</div>				         
+							<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+								{{docData.remitente}}
+							</div>
+						 </div>
+						 <div class="row formularioinfolabel">	
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+								{{ 'ReceivedDate' | translate }}:
+							</div>
+							<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+								{{docData.fechaEnvio}}
+							</div>
+						 </div>
+						 <div class="row formularioinfolabel">						 
+							<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+								{{ 'RelatedDoc' | translate }}:
+							</div>
+							<div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
+								{{docData.observacion}}
+							</div>							
+				         </div>
+				     </div>                 
+                 </div>	
+				 <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12" ng-if="lectura=='N'">   
+			         	<div class="row">
+							<h3 class="formulariossendheader">
+	                               <label class="radio-inline">
+	                                   <input name="chkPriority" id="chkPriority" value="0" ng-model="optsSend.sendChkPriority" type="radio" style="margin: 0px 0px 0px -20px;">{{ 'MailNormal' | translate }}
+	                               </label>
+	                               <label class="radio-inline">
+	                                   <input name="chkPriority" id="chkPriority" value="1" ng-model="optsSend.sendChkPriority" type="radio" style="margin: 0px 0px 0px -20px;">{{ 'MailUrgent' | translate }}
+	                               </label>
+	                         </h3>				         	
+			         	</div>
+			         	<div class="row" style="padding: 5px;">
+				         	<input class="m-wrap placeholder-no-fix" type="text" placeholder="{{ 'Comment' | translate }}" style="width: 100%; background-color: white; height: 29px; font-size: 12px;" ng-model="optsSend.sendComment"/>
+			         	</div>			               	  
+				 </div>
+				 <div class="col-lg-4 col-md-4 hidden-sm hidden-xs" ng-if="lectura=='N'">
+				         <div class="row">
+				             <h3 class="formulariossendheader">
+				                 {{ 'SendEmailForm' | translate }}
+				             </h3>
+				         </div>				            
+				         <div class="row" style="padding: 6px;">
+							<input class="m-wrap placeholder-no-fix" type="text" ng-model="optsSend.sendCcMail" placeholder="{{ 'ListEmailForm' | translate }}" style="width: 100%; background-color: white; height: 29px; font-size: 12px;"/>
+				         </div>				 
+				 </div>	
+	</div>
+</footer>	
+	
+</div>
+
+<div class="clientFiles"></div>
+
+</form>	
+ 
